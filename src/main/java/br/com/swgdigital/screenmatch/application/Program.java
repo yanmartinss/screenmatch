@@ -7,11 +7,9 @@ import br.com.swgdigital.screenmatch.model.Episodio;
 import br.com.swgdigital.screenmatch.service.ConsumoApi;
 import br.com.swgdigital.screenmatch.service.ConverteDados;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -53,12 +51,17 @@ public class Program {
 
         List<DadosEpisodio> dadosEpisodios = temporadas.stream().flatMap(t -> t.episodes().stream()).collect(Collectors.toList());
 
-        IO.println("Top 5 episódios:");
+      /*  IO.println("Top 10 episódios:");
         dadosEpisodios.stream()
                 .filter(e -> !e.rate().equalsIgnoreCase("N/A"))
+                .peek(e -> IO.println("Primeiro filtro(N/A) " + e))
                 .sorted(Comparator.comparing(DadosEpisodio::rate).reversed())
-                .limit(5)
-                .forEach(IO::println);
+                .peek(e -> IO.println("Ordenação " + e))
+                .limit(10)
+                .peek(e -> IO.println("Limite " + e))
+                .map(e -> e.title().toUpperCase())
+                .peek(e -> IO.println("Mapeamento " + e))
+                .forEach(IO::println); */
 
         List<Episodio> episodios = temporadas.stream()
                 .flatMap(t -> t.episodes().stream()
@@ -67,18 +70,30 @@ public class Program {
 
         episodios.forEach(IO::println);
 
-        IO.print("From which year do you want to see the episodes? ");
-        Integer year = sc.nextInt();
+        IO.print("Digite um trecho do título do episódio: ");
+        String trechoTitulo = sc.nextLine();
+        Optional<Episodio> episodioBuscado = episodios.stream()
+                .filter(e -> e.getTitle().toUpperCase().contains(trechoTitulo.toUpperCase()))
+                .findFirst();
+        if (episodioBuscado.isPresent()) {
+            IO.println("Episódio encontrado!");
+            IO.println("Temporada: " + episodioBuscado.get().getSeason());
+        } else {
+            IO.println("Episódio não encontrado");
+        }
 
-        LocalDate searchDate = LocalDate.of(year, 1, 1);
+                /* IO.print("From which year do you want to see the episodes? ");
+                 Integer year = sc.nextInt();
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                 LocalDate searchDate = LocalDate.of(year, 1, 1);
 
-        episodios.stream()
-                .filter(e -> e.getReleaseDate() != null && e.getReleaseDate().isAfter(searchDate))
-                .forEach(e -> IO.println("Season: " + e.getSeason()
-                        + "Episode: " + e.getTitle()
-                        + "Release Date: " + e.getReleaseDate().format(dtf)));
+                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+                 episodios.stream()
+                         .filter(e -> e.getReleaseDate() != null && e.getReleaseDate().isAfter(searchDate))
+                         .forEach(e -> IO.println("Season: " + e.getSeason()
+                                 + "Episode: " + e.getTitle()
+                                 + "Release Date: " + e.getReleaseDate().format(dtf))); */
 
         sc.close();
     }
