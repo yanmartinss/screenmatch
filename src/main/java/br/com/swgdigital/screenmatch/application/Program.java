@@ -7,10 +7,7 @@ import br.com.swgdigital.screenmatch.model.Episodio;
 import br.com.swgdigital.screenmatch.service.ConsumoApi;
 import br.com.swgdigital.screenmatch.service.ConverteDados;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Program {
@@ -70,7 +67,7 @@ public class Program {
 
         episodios.forEach(IO::println);
 
-        IO.print("Digite um trecho do título do episódio: ");
+         /*IO.print("Digite um trecho do título do episódio: ");
         String trechoTitulo = sc.nextLine();
         Optional<Episodio> episodioBuscado = episodios.stream()
                 .filter(e -> e.getTitle().toUpperCase().contains(trechoTitulo.toUpperCase()))
@@ -80,7 +77,7 @@ public class Program {
             IO.println("Temporada: " + episodioBuscado.get().getSeason());
         } else {
             IO.println("Episódio não encontrado");
-        }
+        } */
 
                 /* IO.print("From which year do you want to see the episodes? ");
                  Integer year = sc.nextInt();
@@ -94,6 +91,19 @@ public class Program {
                          .forEach(e -> IO.println("Season: " + e.getSeason()
                                  + "Episode: " + e.getTitle()
                                  + "Release Date: " + e.getReleaseDate().format(dtf))); */
+
+        Map<Integer, Double> avaliacoesPorTemporada = episodios.stream()
+                .filter(e -> e.getRate() > 0.0)
+                .collect(Collectors.groupingBy(Episodio::getSeason, Collectors.averagingDouble(Episodio::getRate)));
+        IO.println(avaliacoesPorTemporada);
+
+        DoubleSummaryStatistics est = episodios.stream()
+                .filter(e -> e.getRate() > 0.0)
+                .collect(Collectors.summarizingDouble(Episodio::getRate));
+        IO.println("Média: " + String.format("%.2f", est.getAverage()));
+        IO.println("Melhor  episódio: " + est.getMax());
+        IO.println("Pior episódio: " + est.getMin());
+        IO.println("Quantidade de episódios: " + est.getCount());
 
         sc.close();
     }
