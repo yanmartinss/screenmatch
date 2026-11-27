@@ -1,15 +1,26 @@
 package br.com.swgdigital.screenmatch.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+@Entity
+@Table(name = "episodios")
 public class Episodio {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     private Integer season;
     private String title;
     private Integer episodeNumber;
     private Double rate;
     private LocalDate releaseDate;
+
+    @ManyToOne
+    private Serie serie;
 
     public Episodio() {
     }
@@ -30,6 +41,22 @@ public class Episodio {
         }
     }
 
+    public Serie getSerie() {
+        return serie;
+    }
+
+    public void setSerie(Serie serie) {
+        this.serie = serie;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
@@ -42,7 +69,7 @@ public class Episodio {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(Double rate) {
         this.rate = rate;
     }
 

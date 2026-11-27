@@ -28,7 +28,7 @@ public class Serie {
 
     private String sinopse;
 
-    @Transient
+    @OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Episodio> episodios = new ArrayList<Episodio>();
 
     public Serie() {}
@@ -62,7 +62,8 @@ public class Serie {
     }
 
     public void setEpisodios(List<Episodio> episodios) {
-        this.episodios = episodios;
+        episodios.forEach(e -> e.setSerie(this));
+        this.episodios = new ArrayList<>(episodios);
     }
 
     public String getTitle() {
